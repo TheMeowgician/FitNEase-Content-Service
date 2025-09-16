@@ -10,11 +10,11 @@ use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\VideoController;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    return $request->attributes->get('user');
+})->middleware('auth.api');
 
 // Content Service Routes with /content prefix - Protected by authentication
-Route::prefix('content')->middleware('auth:sanctum')->group(function () {
+Route::prefix('content')->middleware('auth.api')->group(function () {
 
     // Exercise Management Routes - Read access for all authenticated users
     Route::controller(ExerciseController::class)->group(function () {
@@ -69,7 +69,7 @@ Route::prefix('content')->middleware('auth:sanctum')->group(function () {
 });
 
 // ML Data Endpoints - Service-to-service communication (requires service token)
-Route::prefix('content')->middleware('auth:sanctum')->group(function () {
+Route::prefix('content')->middleware('auth.api')->group(function () {
     Route::controller(MLDataController::class)->group(function () {
         Route::get('/all-exercises', 'getAllExercises');                           // GET /content/all-exercises
         Route::get('/exercise-features/{id}', 'getExerciseFeatures');             // GET /content/exercise-features/{id}

@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/*',
         ]);
+
+        // Register custom API token validation middleware
+        $middleware->alias([
+            'auth.api' => \App\Http\Middleware\ValidateApiToken::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

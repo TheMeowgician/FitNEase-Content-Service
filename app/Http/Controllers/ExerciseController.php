@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Exercise;
 use App\Models\ExerciseInstruction;
+use App\Services\CommsService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
@@ -97,6 +98,18 @@ class ExerciseController extends Controller
         ]);
 
         $exercise = Exercise::create($validated);
+
+        // Demonstrate service-to-service communication: notify user of new exercise
+        $token = $request->bearerToken();
+        $userId = $request->attributes->get('user_id');
+
+        if ($token && $userId) {
+            $commsService = new CommsService();
+            $commsService->sendAchievementNotification($token, $userId, [
+                'title' => 'New Exercise Created!',
+                'message' => "You've successfully created a new exercise: {$exercise->exercise_name}"
+            ]);
+        }
 
         return response()->json([
             'success' => true,
