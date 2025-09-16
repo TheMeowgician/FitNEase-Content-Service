@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exercise_instructions', function (Blueprint $table) {
-            $table->id();
+            $table->id('instruction_id');
+            $table->foreignId('exercise_id')->constrained('exercises', 'exercise_id')->onDelete('cascade');
+            $table->enum('instruction_type', ['setup', 'execution', 'breathing', 'modification', 'common_mistakes']);
+            $table->text('instruction_text');
+            $table->integer('step_order')->nullable();
+            $table->boolean('is_critical')->default(false);
             $table->timestamps();
+
+            // Index
+            $table->index(['exercise_id', 'instruction_type', 'step_order'], 'idx_exercise_instructions_lookup');
         });
     }
 
