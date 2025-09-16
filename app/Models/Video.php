@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Video extends Model
 {
     protected $primaryKey = 'video_id';
+    public $timestamps = false;
+
+    protected $dates = ['created_at'];
 
     protected $fillable = [
         'exercise_id',

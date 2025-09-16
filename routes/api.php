@@ -28,7 +28,7 @@ Route::prefix('content')->group(function () {
     // Workout Management Routes
     Route::controller(WorkoutController::class)->group(function () {
         Route::get('/workouts/{difficulty}/{muscleGroup}', 'getFilteredWorkouts');  // GET /content/workouts/{difficulty}/{muscleGroup}
-        Route::get('/workouts/{criteria}', 'searchWorkouts');                       // GET /content/workouts/{criteria} (search)
+        Route::get('/workouts/search', 'searchWorkouts');                           // GET /content/workouts/search (search by criteria)
         Route::get('/workout/{id}', 'show');                                        // GET /content/workout/{id}
         Route::post('/workouts', 'store');                                          // POST /content/workouts
     });

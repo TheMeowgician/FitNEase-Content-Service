@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('min_experience_months')->default(0);
             $table->string('recommended_fitness_level', 100)->nullable();
-            $table->decimal('intensity_scale', 4, 2)->nullable()->comment('1.00 to 10.00');
+            $table->decimal('intensity_scale', 3, 2)->nullable()->comment('1.00 to 10.00');
             $table->timestamps();
         });
     }

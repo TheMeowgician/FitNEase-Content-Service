@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('video_quality', ['720p', '1080p', '480p'])->default('720p');
             $table->decimal('file_size_mb', 8, 2)->nullable();
             $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
 
             // Indexes
             $table->index(['exercise_id', 'is_active'], 'idx_videos_exercise');
