@@ -90,7 +90,7 @@ class MLDataController extends Controller
             'duration_normalized' => $exercise->default_duration_seconds / 120, // Normalize to 0-1
             'intensity_score' => ($exercise->calories_burned_per_minute ?? 0) / 20, // Normalize to 0-1
             'equipment_requirements' => $this->encodeEquipment($exercise->equipment_needed),
-            'instruction_complexity' => $exercise->instructions->count(),
+            'instruction_complexity' => $exercise->instructions()->count(),
             'category_encoding' => $this->encodeCategoryOneHot($exercise->exercise_category)
         ];
     }

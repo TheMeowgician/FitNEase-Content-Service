@@ -30,8 +30,17 @@ class Workout extends Model
         'is_system_generated' => 'boolean',
         'total_exercises' => 'integer',
         'estimated_calories_burned' => 'decimal:2',
-        'target_muscle_groups' => 'array',
     ];
+
+    public function setTargetMuscleGroupsAttribute($value)
+    {
+        $this->attributes['target_muscle_groups'] = is_array($value) ? implode(',', $value) : $value;
+    }
+
+    public function getTargetMuscleGroupsAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
 
     public function exercises(): BelongsToMany
     {
