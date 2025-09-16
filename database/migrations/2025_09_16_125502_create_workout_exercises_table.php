@@ -12,8 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('workout_exercises', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id('workout_exercise_id');
+            $table->foreignId('workout_id')->constrained('workouts', 'workout_id')->onDelete('cascade');
+            $table->foreignId('exercise_id')->constrained('exercises', 'exercise_id')->onDelete('cascade');
+            $table->integer('order_sequence');
+            $table->integer('custom_duration_seconds')->nullable();
+            $table->integer('custom_rest_duration_seconds')->nullable();
+            $table->integer('sets_count')->default(1);
+
+            // Unique constraint
+            $table->unique(['workout_id', 'order_sequence']);
         });
     }
 
