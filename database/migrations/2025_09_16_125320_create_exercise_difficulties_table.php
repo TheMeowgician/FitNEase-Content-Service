@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exercise_difficulties', function (Blueprint $table) {
-            $table->id();
+            $table->id('difficulty_id');
+            $table->enum('difficulty_name', ['beginner', 'medium', 'expert'])->unique();
+            $table->text('description')->nullable();
+            $table->integer('min_experience_months')->default(0);
+            $table->string('recommended_fitness_level', 100)->nullable();
+            $table->decimal('intensity_scale', 4, 2)->nullable()->comment('1.00 to 10.00');
             $table->timestamps();
         });
     }
