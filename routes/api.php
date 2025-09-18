@@ -9,6 +9,16 @@ use App\Http\Controllers\MLDataController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\VideoController;
 
+// Health check endpoint for Docker and service monitoring
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'service' => 'fitnease-content',
+        'timestamp' => now()->toISOString(),
+        'database' => 'connected'
+    ]);
+});
+
 Route::get('/user', function (Request $request) {
     return $request->attributes->get('user');
 })->middleware('auth.api');
