@@ -8,6 +8,8 @@ use App\Http\Controllers\ContentDiscoveryController;
 use App\Http\Controllers\MLDataController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\ServiceTestController;
+use App\Http\Controllers\ServiceCommunicationTestController;
 
 // Health check endpoint for Docker and service monitoring
 Route::get('/health', function () {
@@ -86,4 +88,17 @@ Route::prefix('content')->middleware('auth.api')->group(function () {
         Route::get('/exercise-similarity-data', 'getExerciseSimilarityData');     // GET /content/exercise-similarity-data
         Route::post('/exercise-similarity', 'calculateExerciseSimilarity');       // POST /content/exercise-similarity
     });
+});
+
+// Service testing routes - for validating inter-service communication
+Route::middleware('auth.api')->prefix('service-tests')->group(function () {
+    Route::get('/auth', [ServiceTestController::class, 'testAuthService']);
+    Route::get('/comms', [ServiceTestController::class, 'testCommsService']);
+    Route::get('/media', [ServiceTestController::class, 'testMediaService']);
+    Route::get('/cross-service', [ServiceTestController::class, 'testCrossServiceCommunication']);
+    Route::get('/all', [ServiceTestController::class, 'testAllServices']);
+
+    Route::get('/connectivity', [ServiceCommunicationTestController::class, 'testServiceConnectivity']);
+    Route::get('/token-validation', [ServiceCommunicationTestController::class, 'testContentTokenValidation']);
+    Route::get('/integration', [ServiceCommunicationTestController::class, 'testServiceIntegration']);
 });
