@@ -25,6 +25,7 @@ class Exercise extends Model
     ];
 
     protected $casts = [
+        'difficulty_level' => 'integer',
         'default_duration_seconds' => 'integer',
         'default_rest_duration_seconds' => 'integer',
         'calories_burned_per_minute' => 'decimal:2',
