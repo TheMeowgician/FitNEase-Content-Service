@@ -13,11 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->command->info("🚀 Starting FitNEase Content Service Database Seeding...");
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Import ML training data for exercises
+        $this->call([
+            ExerciseSeeder::class,
         ]);
+
+        $this->command->info("✅ Content service database seeding completed!");
+        $this->command->info("🤖 Ready for ML model integration!");
     }
 }
