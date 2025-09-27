@@ -91,6 +91,14 @@ Route::prefix('content')->middleware('auth.api')->group(function () {
     });
 });
 
+// ML Internal Endpoints - For ML service internal calls (no auth required)
+Route::prefix('ml-internal')->group(function () {
+    Route::controller(MLDataController::class)->group(function () {
+        Route::get('/exercise-attributes', 'getExerciseAttributes');               // GET /ml-internal/exercise-attributes
+        Route::get('/all-exercises', 'getAllExercises');                           // GET /ml-internal/all-exercises
+    });
+});
+
 // Service testing routes - for validating inter-service communication
 Route::middleware('auth.api')->prefix('service-tests')->group(function () {
     Route::get('/auth', [ServiceTestController::class, 'testAuthService']);
