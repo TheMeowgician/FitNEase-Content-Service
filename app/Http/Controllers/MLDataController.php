@@ -42,6 +42,36 @@ class MLDataController extends Controller
         ]);
     }
 
+    public function getExerciseAttributes(): JsonResponse
+    {
+        $exercises = Exercise::select([
+            'exercise_id',
+            'exercise_name',
+            'difficulty_level',
+            'target_muscle_group',
+            'default_duration_seconds',
+            'calories_burned_per_minute',
+            'equipment_needed',
+            'exercise_category'
+        ])->get();
+
+        return response()->json([
+            'success' => true,
+            'exercises' => $exercises->map(function($exercise) {
+                return [
+                    'exercise_id' => $exercise->exercise_id,
+                    'exercise_name' => $exercise->exercise_name,
+                    'difficulty_level' => $exercise->difficulty_level,
+                    'target_muscle_group' => $exercise->target_muscle_group,
+                    'default_duration_seconds' => $exercise->default_duration_seconds,
+                    'estimated_calories_burned' => $exercise->calories_burned_per_minute * ($exercise->default_duration_seconds / 60),
+                    'equipment_needed' => $exercise->equipment_needed,
+                    'exercise_category' => $exercise->exercise_category
+                ];
+            })
+        ]);
+    }
+
     public function getExerciseFeatures($id): JsonResponse
     {
         $exercise = Exercise::with(['muscleGroups', 'instructions'])->find($id);

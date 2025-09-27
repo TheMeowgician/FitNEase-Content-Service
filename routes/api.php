@@ -84,6 +84,7 @@ Route::prefix('content')->middleware('auth.api')->group(function () {
 Route::prefix('content')->middleware('auth.api')->group(function () {
     Route::controller(MLDataController::class)->group(function () {
         Route::get('/all-exercises', 'getAllExercises');                           // GET /content/all-exercises
+        Route::get('/exercise-attributes', 'getExerciseAttributes');               // GET /content/exercise-attributes (for ML service)
         Route::get('/exercise-features/{id}', 'getExerciseFeatures');             // GET /content/exercise-features/{id}
         Route::get('/exercise-similarity-data', 'getExerciseSimilarityData');     // GET /content/exercise-similarity-data
         Route::post('/exercise-similarity', 'calculateExerciseSimilarity');       // POST /content/exercise-similarity
