@@ -72,6 +72,31 @@ class MLDataController extends Controller
         ]);
     }
 
+    public function getExerciseById($id): JsonResponse
+    {
+        $exercise = Exercise::find($id);
+
+        if (!$exercise) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exercise not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'exercise_id' => $exercise->exercise_id,
+            'exercise_name' => $exercise->exercise_name,
+            'difficulty_level' => $exercise->difficulty_level,
+            'target_muscle_group' => $exercise->target_muscle_group,
+            'default_duration_seconds' => $exercise->default_duration_seconds,
+            'calories_burned_per_minute' => $exercise->calories_burned_per_minute,
+            'equipment_needed' => $exercise->equipment_needed,
+            'exercise_category' => $exercise->exercise_category,
+            'description' => $exercise->description,
+        ]);
+    }
+
     public function getExerciseFeatures($id): JsonResponse
     {
         $exercise = Exercise::with(['muscleGroups', 'instructions'])->find($id);

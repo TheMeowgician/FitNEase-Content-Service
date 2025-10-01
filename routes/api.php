@@ -96,6 +96,7 @@ Route::prefix('ml-internal')->group(function () {
     Route::controller(MLDataController::class)->group(function () {
         Route::get('/exercise-attributes', 'getExerciseAttributes');               // GET /ml-internal/exercise-attributes
         Route::get('/all-exercises', 'getAllExercises');                           // GET /ml-internal/all-exercises
+        Route::get('/exercises/{id}', 'getExerciseById');                          // GET /ml-internal/exercises/{id}
     });
 });
 
