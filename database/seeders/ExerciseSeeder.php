@@ -36,11 +36,12 @@ class ExerciseSeeder extends Seeder
         Exercise::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Difficulty level mapping from CSV to database integer (1-5)
+        // Difficulty level mapping from CSV to database integer (1-3)
+        // IMPORTANT: Must match ML service mapping!
         $difficultyMap = [
             'beginner' => 1,        // beginner
-            'intermediate' => 3,    // intermediate
-            'advanced' => 5,        // expert
+            'intermediate' => 2,    // intermediate
+            'advanced' => 3,        // advanced
         ];
 
         // Muscle group mapping from CSV to database enum
