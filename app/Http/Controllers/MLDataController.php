@@ -10,29 +10,59 @@ class MLDataController extends Controller
 {
     public function getAllExercises(): JsonResponse
     {
-        $exercises = Exercise::with(['muscleGroups'])
-            ->select([
+        $exercises = Exercise::select([
                 'exercise_id',
                 'exercise_name',
+                'description',
                 'difficulty_level',
                 'target_muscle_group',
                 'default_duration_seconds',
+                'default_rest_duration_seconds',
                 'calories_burned_per_minute',
                 'equipment_needed',
-                'exercise_category'
+                'exercise_category',
+                'instructions',
+                'safety_tips',
+                'created_at',
+                'updated_at'
             ])
             ->get()
             ->map(function($exercise) {
+                // Parse instructions if it's JSON string
+                $instructions = [];
+                if ($exercise->instructions) {
+                    $decoded = json_decode($exercise->instructions, true);
+                    $instructions = is_array($decoded) ? $decoded : [$exercise->instructions];
+                }
+
+                // Parse safety tips if it's JSON string
+                $tips = [];
+                if ($exercise->safety_tips) {
+                    $decoded = json_decode($exercise->safety_tips, true);
+                    $tips = is_array($decoded) ? $decoded : [$exercise->safety_tips];
+                }
+
                 return [
                     'exercise_id' => $exercise->exercise_id,
-                    'features' => [
-                        'difficulty_level' => $exercise->difficulty_level,
-                        'muscle_groups' => $exercise->muscleGroups->pluck('group_name')->toArray(),
-                        'duration' => $exercise->default_duration_seconds,
-                        'intensity' => $exercise->calories_burned_per_minute,
-                        'equipment' => explode(',', $exercise->equipment_needed ?? ''),
-                        'category' => $exercise->exercise_category
-                    ]
+                    'exercise_name' => $exercise->exercise_name,
+                    'description' => $exercise->description ?? '',
+                    'instructions' => $instructions,
+                    'difficulty_level' => $exercise->difficulty_level ?? 'beginner',
+                    'target_muscle_group' => $exercise->target_muscle_group ?? '',
+                    'equipment_needed' => $exercise->equipment_needed ?? 'none',
+                    'default_duration_seconds' => $exercise->default_duration_seconds ?? 0,
+                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute ?? 0,
+                    'exercise_category' => $exercise->exercise_category ?? '',
+                    'video_url' => '', // Column doesn't exist in DB
+                    'image_url' => '', // Column doesn't exist in DB
+                    'tips' => $tips,
+                    'common_mistakes' => [], // Column doesn't exist in DB
+                    'variations' => [], // Column doesn't exist in DB
+                    'target_reps' => null,
+                    'target_sets' => null,
+                    'rest_time_seconds' => $exercise->default_rest_duration_seconds ?? null,
+                    'created_at' => $exercise->created_at?->toIso8601String() ?? '',
+                    'updated_at' => $exercise->updated_at?->toIso8601String() ?? ''
                 ];
             });
 
