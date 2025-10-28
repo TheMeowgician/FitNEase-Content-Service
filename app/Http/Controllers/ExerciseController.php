@@ -11,11 +11,42 @@ use Illuminate\Validation\Rule;
 
 class ExerciseController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $exercises = Exercise::with(['muscleGroups', 'videos', 'instructions'])
-            ->orderBy('exercise_name')
-            ->get();
+        $query = Exercise::with(['muscleGroups', 'videos', 'instructions']);
+
+        // Filter by difficulty if provided
+        if ($request->has('difficulty')) {
+            $difficulty = $request->input('difficulty');
+            // Map difficulty string to integer (1=beginner, 2=intermediate, 3=advanced)
+            $difficultyMap = [
+                'beginner' => 1,
+                'intermediate' => 2,
+                'medium' => 2,
+                'advanced' => 3,
+                'expert' => 3
+            ];
+            if (isset($difficultyMap[$difficulty])) {
+                $query->where('difficulty_level', $difficultyMap[$difficulty]);
+            }
+        }
+
+        // Filter by muscle groups if provided (comma-separated)
+        if ($request->has('muscle_groups')) {
+            $muscleGroups = explode(',', $request->input('muscle_groups'));
+            $query->whereIn('target_muscle_group', $muscleGroups);
+        }
+
+        // Randomize for variety
+        $query->inRandomOrder();
+
+        // Apply limit if provided
+        if ($request->has('limit')) {
+            $limit = min((int) $request->input('limit'), 200); // Max 200 exercises
+            $query->limit($limit);
+        }
+
+        $exercises = $query->get();
 
         return response()->json([
             'success' => true,

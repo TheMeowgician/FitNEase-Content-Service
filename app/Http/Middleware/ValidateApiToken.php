@@ -16,6 +16,16 @@ class ValidateApiToken
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Check for internal service token first (service-to-service communication)
+        $internalSecret = $request->header('X-Internal-Secret');
+
+        if ($internalSecret && $internalSecret === env('INTERNAL_SERVICE_TOKEN')) {
+            // Internal service authentication successful
+            $request->attributes->set('is_internal_service', true);
+            return $next($request);
+        }
+
+        // Otherwise, check for user Bearer token
         $token = $request->bearerToken();
 
         if (!$token) {
