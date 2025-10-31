@@ -94,7 +94,7 @@ class MLDataController extends Controller
                     'difficulty_level' => $exercise->difficulty_level,
                     'target_muscle_group' => $exercise->target_muscle_group,
                     'default_duration_seconds' => $exercise->default_duration_seconds,
-                    'estimated_calories_burned' => $exercise->calories_burned_per_minute * ($exercise->default_duration_seconds / 60),
+                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute,
                     'equipment_needed' => $exercise->equipment_needed,
                     'exercise_category' => $exercise->exercise_category
                 ];
