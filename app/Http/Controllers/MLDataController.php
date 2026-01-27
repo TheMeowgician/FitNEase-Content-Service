@@ -51,7 +51,7 @@ class MLDataController extends Controller
                     'target_muscle_group' => $exercise->target_muscle_group ?? '',
                     'equipment_needed' => $exercise->equipment_needed ?? 'none',
                     'default_duration_seconds' => $exercise->default_duration_seconds ?? 0,
-                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute ?? 0,
+                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute ?? 7.0, // Default: 7 cal/min for Tabata
                     'exercise_category' => $exercise->exercise_category ?? '',
                     'video_url' => '', // Column doesn't exist in DB
                     'image_url' => '', // Column doesn't exist in DB
@@ -94,7 +94,7 @@ class MLDataController extends Controller
                     'difficulty_level' => $exercise->difficulty_level,
                     'target_muscle_group' => $exercise->target_muscle_group,
                     'default_duration_seconds' => $exercise->default_duration_seconds,
-                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute,
+                    'calories_burned_per_minute' => $exercise->calories_burned_per_minute ?? 7.0,
                     'equipment_needed' => $exercise->equipment_needed,
                     'exercise_category' => $exercise->exercise_category
                 ];
@@ -120,7 +120,7 @@ class MLDataController extends Controller
             'difficulty_level' => $exercise->difficulty_level,
             'target_muscle_group' => $exercise->target_muscle_group,
             'default_duration_seconds' => $exercise->default_duration_seconds,
-            'calories_burned_per_minute' => $exercise->calories_burned_per_minute,
+            'calories_burned_per_minute' => $exercise->calories_burned_per_minute ?? 7.0,
             'equipment_needed' => $exercise->equipment_needed,
             'exercise_category' => $exercise->exercise_category,
             'description' => $exercise->description,
