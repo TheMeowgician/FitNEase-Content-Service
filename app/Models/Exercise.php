@@ -22,6 +22,7 @@ class Exercise extends Model
         'calories_burned_per_minute',
         'equipment_needed',
         'exercise_category',
+        'demo_gif_url',
     ];
 
     protected $casts = [
