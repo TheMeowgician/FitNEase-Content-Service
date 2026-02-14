@@ -30,6 +30,7 @@ Route::prefix('content')->middleware('auth.api')->group(function () {
 
     // Exercise Management Routes - Read access for all authenticated users
     Route::controller(ExerciseController::class)->group(function () {
+        Route::get('/exercise-library', 'library');                          // GET /content/exercise-library (paginated)
         Route::get('/exercises', 'index');                                    // GET /content/exercises
         Route::get('/exercises/{id}', 'show');                               // GET /content/exercises/{id}
         Route::get('/exercise-attributes/{id}', 'getExerciseAttributes');    // GET /content/exercise-attributes/{id}

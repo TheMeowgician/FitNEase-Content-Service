@@ -112,6 +112,70 @@ class ExerciseController extends Controller
         ]);
     }
 
+    public function library(Request $request): JsonResponse
+    {
+        $perPage = min((int) $request->input('per_page', 30), 50);
+        $search = $request->input('search');
+        $difficulty = $request->input('difficulty');
+        $muscleGroup = $request->input('muscle_group');
+
+        // Build filtered query
+        $query = Exercise::select([
+            'exercise_id',
+            'exercise_name',
+            'difficulty_level',
+            'target_muscle_group',
+            'default_duration_seconds',
+            'calories_burned_per_minute',
+            'equipment_needed',
+            'exercise_category',
+        ]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('exercise_name', 'LIKE', "%{$search}%")
+                  ->orWhere('target_muscle_group', 'LIKE', "%{$search}%")
+                  ->orWhere('exercise_category', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($difficulty) {
+            $query->where('difficulty_level', (int) $difficulty);
+        }
+
+        if ($muscleGroup) {
+            $query->where('target_muscle_group', $muscleGroup);
+        }
+
+        $query->orderBy('exercise_name', 'asc');
+
+        $paginated = $query->paginate($perPage);
+
+        // Get aggregate counts for filter chips (unfiltered totals)
+        $stats = [
+            'total' => Exercise::count(),
+            'beginner' => Exercise::where('difficulty_level', 1)->count(),
+            'intermediate' => Exercise::where('difficulty_level', 2)->count(),
+            'advanced' => Exercise::where('difficulty_level', 3)->count(),
+            'upper_body' => Exercise::where('target_muscle_group', 'upper_body')->count(),
+            'lower_body' => Exercise::where('target_muscle_group', 'lower_body')->count(),
+            'core' => Exercise::where('target_muscle_group', 'core')->count(),
+            'full_body' => Exercise::where('target_muscle_group', 'full_body')->count(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginated->items(),
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+            ],
+            'stats' => $stats,
+        ]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
