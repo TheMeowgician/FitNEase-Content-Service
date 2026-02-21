@@ -37,8 +37,8 @@ class ExerciseController extends Controller
             $query->whereIn('target_muscle_group', $muscleGroups);
         }
 
-        // Randomize for variety
-        $query->inRandomOrder();
+        // Order by ID for consistent, fast results
+        $query->orderBy('exercise_id');
 
         // Apply limit if provided
         if ($request->has('limit')) {
