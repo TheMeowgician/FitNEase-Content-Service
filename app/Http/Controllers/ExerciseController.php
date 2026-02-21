@@ -7,50 +7,54 @@ use App\Models\ExerciseInstruction;
 use App\Services\CommsService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class ExerciseController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Exercise::with(['muscleGroups', 'videos', 'instructions']);
+        // Build a cache key from the query parameters
+        $cacheKey = 'exercises:' . md5($request->fullUrl());
 
-        // Filter by difficulty if provided
-        if ($request->has('difficulty')) {
-            $difficulty = $request->input('difficulty');
-            // Map difficulty string to integer (1=beginner, 2=intermediate, 3=advanced)
-            $difficultyMap = [
-                'beginner' => 1,
-                'intermediate' => 2,
-                'medium' => 2,
-                'advanced' => 3,
-                'expert' => 3
-            ];
-            if (isset($difficultyMap[$difficulty])) {
-                $query->where('difficulty_level', $difficultyMap[$difficulty]);
+        $data = Cache::remember($cacheKey, 300, function () use ($request) {
+            $query = Exercise::with(['muscleGroups', 'videos', 'instructions']);
+
+            // Filter by difficulty if provided
+            if ($request->has('difficulty')) {
+                $difficulty = $request->input('difficulty');
+                // Map difficulty string to integer (1=beginner, 2=intermediate, 3=advanced)
+                $difficultyMap = [
+                    'beginner' => 1,
+                    'intermediate' => 2,
+                    'medium' => 2,
+                    'advanced' => 3,
+                    'expert' => 3
+                ];
+                if (isset($difficultyMap[$difficulty])) {
+                    $query->where('difficulty_level', $difficultyMap[$difficulty]);
+                }
             }
-        }
 
-        // Filter by muscle groups if provided (comma-separated)
-        if ($request->has('muscle_groups')) {
-            $muscleGroups = explode(',', $request->input('muscle_groups'));
-            $query->whereIn('target_muscle_group', $muscleGroups);
-        }
+            // Filter by muscle groups if provided (comma-separated)
+            if ($request->has('muscle_groups')) {
+                $muscleGroups = explode(',', $request->input('muscle_groups'));
+                $query->whereIn('target_muscle_group', $muscleGroups);
+            }
 
-        // Order by ID for consistent, fast results
-        $query->orderBy('exercise_id');
+            // Order by ID for consistent, fast results
+            $query->orderBy('exercise_id');
 
-        // Apply limit if provided
-        if ($request->has('limit')) {
-            $limit = min((int) $request->input('limit'), 200); // Max 200 exercises
+            // Apply limit if provided, default to 100 to prevent unbounded queries
+            $limit = min((int) $request->input('limit', 100), 200);
             $query->limit($limit);
-        }
 
-        $exercises = $query->get();
+            return $query->get();
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $exercises
+            'data' => $data
         ]);
     }
 
